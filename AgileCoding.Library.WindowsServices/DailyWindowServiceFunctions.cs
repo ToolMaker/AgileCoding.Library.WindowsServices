@@ -65,39 +65,35 @@ namespace AgileCoding.Library.WindowsServices
 
         public static TimeSpan? GetTimerDelayBeforeStartInMilliseconds(TimeSpan startTime, TimeSpan stopTime, TimeSpan timeNowOverride)
         {
-            long timeDiffInMilliseconds = 0;
+            long timeDiffInTicks = 0;
             if (startTime < stopTime)
             {
-                if (timeNowOverride > startTime && timeNowOverride < stopTime)
+                if (timeNowOverride >= startTime && timeNowOverride < stopTime)
                 {
                     return null;
                 }
                 else if (timeNowOverride >= stopTime)
                 {
-                    timeDiffInMilliseconds = (new TimeSpan(23, 59, 59) - timeNowOverride).Ticks + startTime.Ticks;
+                    timeDiffInTicks = (new TimeSpan(23, 59, 59) - timeNowOverride).Ticks + startTime.Ticks;
                 }
                 else
                 {
-                    timeDiffInMilliseconds = (timeNowOverride - startTime).Ticks;
+                    timeDiffInTicks = (startTime - timeNowOverride).Ticks;
                 }
             }
             else
             {
-                if (timeNowOverride > startTime || timeNowOverride < stopTime)
+                if (timeNowOverride >= startTime || timeNowOverride < stopTime)
                 {
                     return null;
                 }
-                else if (timeNowOverride < startTime)
+                else if ((timeNowOverride < startTime) || (timeNowOverride > stopTime))
                 {
-                    timeDiffInMilliseconds = (startTime - timeNowOverride).Ticks;
-                }
-                else if (timeNowOverride > stopTime)
-                {
-                    timeDiffInMilliseconds = (timeNowOverride - startTime).Ticks;
+                    timeDiffInTicks = (startTime - timeNowOverride).Ticks;
                 }
             }
 
-            return new TimeSpan(timeDiffInMilliseconds);
+            return new TimeSpan(timeDiffInTicks);
         }
     }
 }
